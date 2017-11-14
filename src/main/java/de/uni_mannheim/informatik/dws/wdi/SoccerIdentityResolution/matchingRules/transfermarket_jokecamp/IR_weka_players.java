@@ -2,6 +2,7 @@ package de.uni_mannheim.informatik.dws.wdi.SoccerIdentityResolution.matchingRule
 
 import de.uni_mannheim.informatik.dws.wdi.SoccerIdentityResolution.ErrorAnalysisPlayers;
 import de.uni_mannheim.informatik.dws.wdi.SoccerIdentityResolution.blockers.PlayerBlockerByBirthYear;
+import de.uni_mannheim.informatik.dws.wdi.SoccerIdentityResolution.blockers.PlayerBlockerByFirstLettersOfName;
 import de.uni_mannheim.informatik.dws.wdi.SoccerIdentityResolution.comparators.PlayerBirthDateComparatorLevenshtein;
 import de.uni_mannheim.informatik.dws.wdi.SoccerIdentityResolution.comparators.PlayerHeightComparator;
 import de.uni_mannheim.informatik.dws.wdi.SoccerIdentityResolution.comparators.PlayerNameComparatorLevenshtein;
@@ -10,6 +11,7 @@ import de.uni_mannheim.informatik.dws.wdi.SoccerIdentityResolution.model.PlayerX
 import de.uni_mannheim.informatik.dws.winter.matching.MatchingEngine;
 import de.uni_mannheim.informatik.dws.winter.matching.MatchingEvaluator;
 import de.uni_mannheim.informatik.dws.winter.matching.algorithms.RuleLearner;
+import de.uni_mannheim.informatik.dws.winter.matching.blockers.NoBlocker;
 import de.uni_mannheim.informatik.dws.winter.matching.blockers.StandardRecordBlocker;
 import de.uni_mannheim.informatik.dws.winter.matching.rules.WekaMatchingRule;
 import de.uni_mannheim.informatik.dws.winter.model.Correspondence;
@@ -55,7 +57,11 @@ public class IR_weka_players
         matchingRule.addComparator(new PlayerHeightComparator());
 
         // create a blocker (blocking strategy)
-        StandardRecordBlocker<Player, Attribute> blocker = new StandardRecordBlocker<Player, Attribute>(new PlayerBlockerByBirthYear());
+        //StandardRecordBlocker<Player, Attribute> blocker = new StandardRecordBlocker<Player, Attribute>(new PlayerBlockerByBirthYear());
+        //NoBlocker<Player, Attribute> blocker = new NoBlocker<>();
+        StandardRecordBlocker<Player, Attribute> blocker = new StandardRecordBlocker<Player, Attribute>(new PlayerBlockerByFirstLettersOfName(4));
+
+
 
         // load the gold standard (test set)
         MatchingGoldStandard goldStandardForTraining = new MatchingGoldStandard();
@@ -70,7 +76,7 @@ public class IR_weka_players
 
         // Execute the matching
         Processable<Correspondence<Player, Attribute>> correspondences = engine.runIdentityResolution(
-                dataJokecamp, dataTransferMarket, null, matchingRule,
+                dataTransferMarket, dataJokecamp, null, matchingRule,
                 blocker);
 
         // write the correspondences to the output file
